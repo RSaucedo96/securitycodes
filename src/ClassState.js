@@ -1,11 +1,14 @@
 import React from "react";
 import { Loading } from "./Loading";
 
+const SECURITY_CODE = 'veritran';
+
 class ClassState extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: true,
+            value:'',
+            error: false,
             loading: false,
         };
     }
@@ -24,9 +27,11 @@ class ClassState extends React.Component {
         if(!!this.state.loading) {
             setTimeout(() => {
                 console.log("Doing the validation");
-
-                this.setState( { loading: false } );
-
+                if (SECURITY_CODE === this.state.value){
+                    this.setState( { error:false, loading: false } );
+                } else {
+                    this.setState( { error:true, loading: false } );
+                }
                 console.log("Finishing the validation");
             }, 3000);
         }
@@ -39,7 +44,7 @@ class ClassState extends React.Component {
 
                 <p>Please enter the security code</p>
 
-                {this.state.error && (
+                {(this.state.error && !this.state.loading) && (
                     <p>Error: Security code is incorrect</p>
                 )}
 
@@ -47,7 +52,13 @@ class ClassState extends React.Component {
                     <Loading />
                 )}
 
-                <input placeholder="Security Code" />
+                <input
+                    placeholder="Security Code"
+                    value={this.state.value}
+                    onChange={(event)=>{
+                        this.setState({value: event.target.value});
+                    }}
+                />
 
                 <button
                     onClick={() => this.setState({ loading: true })}

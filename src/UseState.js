@@ -1,24 +1,39 @@
 import React from "react";
 
+const SECURITY_CODE = 'veritran';
+
 function UseState({name}) {
-    const [error,setError] = React.useState(false);
-    const [loading,setLoading] = React.useState(true);
+    const [state, setState] = React.useState({
+        value: '',
+        error: false,
+        loading: false,
+    });
 
     React.useEffect(()=>{
         console.log("empezando el effecto");
 
-        if (!!loading){
+        if (!!state.loading){
             setTimeout(()=>{
                 console.log("Validando");
-
-                setLoading(false);
-
+                if (state.value === SECURITY_CODE){
+                    setState({
+                        ...state,
+                        error: false,
+                        loading:false,
+                    })
+                } else {
+                    setState({
+                        ...state,
+                        loading:false,
+                        error:true,
+                    })
+                }
                 console.log("terminando Validacion");
             }, 3000);
         }
 
         console.log("terminando el efecto");
-    },[loading]);
+    },[state.loading]);
 
     return(
         <div>
@@ -26,17 +41,33 @@ function UseState({name}) {
 
             <p>Pro favor, escribe el codigo de seguridad</p>
 
-            {error && (
+            {(state.error && !state.loading) && (
                 <p>Error el codigo es incorrecto</p>
             )}
 
-            {loading && (
+            {state.loading && (
                 <p>cargando...</p>
             )}
 
-            <input placeholder="codigo de seguridad"/>
+            <input
+                placeholder="codigo de seguridad"
+                onChange={(event) => {
+                    setState({
+                        ...state,
+                        value:event.target.value,
+                    });
+                }}
+                value={state.value}
+
+            />
             <button
-                onClick={() => setError(!error)}
+                onClick={() => {
+                    setState({
+                        ...state,
+                        loading:true,
+                        error:false,
+                    });
+                }}
             >
                 Comprobar
             </button>
